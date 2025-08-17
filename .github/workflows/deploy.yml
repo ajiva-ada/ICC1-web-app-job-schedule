@@ -1,7 +1,7 @@
 name: build-and-deploy
 on:
   push:
-    branches: [ "main" ]   # change if you use another branch
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -12,12 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Login to your ACR using Admin user creds (from BritEdgeCR → Access keys)
+      - name: Sanity check DNS to ACR
+        run: |
+          getent hosts ${{ secrets.ACR_LOGIN_SERVER }} || (echo "DNS lookup failed"; exit 1)
+
       - name: Docker login to ACR
         uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.ACR_LOGIN_SERVER }}   # e.g. britedgecr-c7gyaxthbe8hzfqey.azurecr.io
-          username: ${{ secrets.ACR_USERNAME }}       # e.g. BritEdgeCR
+          registry: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Build & push image (latest)

@@ -14,7 +14,9 @@ jobs:
 
       - name: Sanity check DNS to ACR
         run: |
-          getent hosts ${{ secrets.ACR_LOGIN_SERVER }} || (echo "DNS lookup failed"; exit 1)
+          REG="britedgecr-c7gyaxthbe8hzfqey.azurecr.io"
+          echo "Checking DNS for: $REG"
+          getent hosts "$REG" || (echo "DNS lookup failed"; exit 1)
 
       - name: Docker login to ACR
         uses: docker/login-action@v3

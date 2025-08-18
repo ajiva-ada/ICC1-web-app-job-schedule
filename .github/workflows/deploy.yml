@@ -18,7 +18,7 @@ jobs:
       - name: Docker login to ACR
         uses: docker/login-action@v3   #log into azure container registry so docker can push images here - credentials stored in secrets 
         with:
-          registry: ${{ secrets.ACR_LOGIN_SERVER }}   #britedgecr-xxxx.azurecr.io added into github secrets 
+          registry: ${{ secrets.ACR_LOGIN_SERVER }}   #britedgecr-c7gxatbhe8hzfqey.azurecr.io added into github secrets 
           username: ${{ secrets.ACR_USERNAME }}       #BritEdgeCR "
           password: ${{ secrets.ACR_PASSWORD }}
 

@@ -2,34 +2,34 @@ name: Build and Deploy to Azure Web App
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ] #runs when pushed to main 
   workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      IMAGE: britedge-app
+      IMAGE: britedge-app  #defines env variable 
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 #pulls repo code to it can build 
 
       - name: Docker login to ACR
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3   #log into azure container registry so docker can push images here - credentials stored in secrets 
         with:
-          registry: ${{ secrets.ACR_LOGIN_SERVER }}   # e.g. britedgecr-xxxx.azurecr.io
-          username: ${{ secrets.ACR_USERNAME }}       # e.g. BritEdgeCR
+          registry: ${{ secrets.ACR_LOGIN_SERVER }}   #britedgecr-xxxx.azurecr.io added into github secrets 
+          username: ${{ secrets.ACR_USERNAME }}       #BritEdgeCR "
           password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Build & push image (latest)
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE }}:latest .
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE }}:latest
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE }}:latest . #builds docker image from repo
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE }}:latest       #pushes image to container registry 
 
-      - name: Deploy to Web App (with publish profile)
+      - name: Deploy to Web App (with publish profile)   #deploys to my web app 
         uses: azure/webapps-deploy@v2
         with:
           app-name: BritEdge-WebApp
           images: ${{ secrets.ACR_LOGIN_SERVER }}/${{ env.IMAGE }}:latest
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}          #authenticates using publish profile secret 
